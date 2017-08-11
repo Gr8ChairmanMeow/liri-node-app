@@ -19,6 +19,31 @@ var spotifyParams = {
 	type: 'track',
 	query: inputName};
 
+//test of title case function
+
+function titleCase(string){
+
+        var titleArr = string.split(" ")
+
+        //loops through movie title array and splits words into
+        //first letter and the remainder of the word
+        for (i=0;i<titleArr.length;i++){
+          //first letter is uppercased
+          var upper = titleArr[i][0].toUpperCase();
+          //rest of word is the string sliced at index 1
+          var rest = titleArr[i].slice(1).toLowerCase();
+          //word string recombined and replaces original word from .split array
+          titleArr[i] = upper + rest;
+        }
+        
+        //once loop through title array complete, individual words of title are recombined with " " inbetween.
+        var title = titleArr.join(" ")
+
+        return title;
+};
+
+//end test
+
 
 //check if there is year
 if (input.length>1){
@@ -55,11 +80,23 @@ switch(process.argv[2]){
 
 		spotify.search(spotifyParams, function(err, data) {
 		
-		if (err) {
-			return console.log('Error occurred: ' + err);
-		}
+			if (err) {
+				return console.log('Error occurred: ' + err);
+			}
 
-		console.log(data); 
+			inputName = titleCase(inputName.replace(/\+/g," "));
+			
+			for (i=0;i<5;i++){
+
+				console.log("----------------------");
+				console.log((i+1) + ". " + data.tracks.items[i].artists[0].name);
+				console.log(inputName);
+				console.log(data.tracks.items[i].album.name);
+				console.log(data.tracks.items[i].external_urls.spotify);
+				console.log("----------------------")
+
+			}
+
 		});
 
 		break;
