@@ -1,0 +1,27 @@
+{
+  "name": "my_package",
+  "version": "1.0.0",
+  "description": "\"first package file.\"",
+  "main": "liri.js",
+  "scripts": {
+    "test": "\"\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Gr8ChairmanMeow/liri-node-app.git"
+  },
+  "keywords": [
+    "\"\""
+  ],
+  "author": "\"\"",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/Gr8ChairmanMeow/liri-node-app/issues"
+  },
+  "homepage": "https://github.com/Gr8ChairmanMeow/liri-node-app#readme",
+  "dependencies": {
+    "node-spotify-api": "^1.0.6",
+    "request": "^2.81.0",
+    "twitter": "^1.7.1"
+  }
+}
