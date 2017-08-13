@@ -59,15 +59,36 @@ function switchify(choice,inputName){
 	switch(choice){
 		case "my-tweets":
 			twitter.get('search/tweets',twitterParams,function(error, tweets, response) {
-		  
+		  		var masterArr = [];
 				if (!error) {
 					tweets = tweets.statuses;
 					for (var i = 0; i < tweets.length; i++) {
-						console.log((i+1) + ": " + tweets[i].text);
+
+						var outputArr = [
+						(i+1) + ": " + tweets[i].text,
+						"",
+						"Created: " + tweets[i].created_at,
+						"--------------------------------------------"];
+
+						for(j=0;j<outputArr.length;j++){
+							console.log(outputArr[j]);
+							masterArr.push(outputArr[j]);
+						}
+
+						/*console.log((i+1) + ": " + tweets[i].text);
 						console.log("");
 						console.log("Created: " + tweets[i].created_at);
-						console.log("--------------------------------------------");
+						console.log("--------------------------------------------");*/
 					}
+				var stream = fs.createWriteStream("log.txt",
+					{ flags: 'a',
+					encoding: null,
+					mode: 0666});
+				stream.on('error', console.error);
+				masterArr.forEach((str) => { 
+					stream.write(str + '\n'); 
+				});
+				stream.end();
 				}
 				else{
 					console.log(error);
