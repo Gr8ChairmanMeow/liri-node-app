@@ -160,7 +160,7 @@ function switchify(choice,inputName){
 			}
 
 			var omdbURL = "http://www.omdbapi.com/?t=" + inputName + "&y=" + year + "&plot=short&apikey=40e9cece";
-			console.log(omdbURL)
+			//console.log(omdbURL)
 			request(omdbURL, function(error, response, body) {
 
 			// If the request is successful (i.e. if the response status code is 200)
