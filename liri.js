@@ -1,6 +1,8 @@
-var input = process.argv.slice(3).join("+").split(",");
-var inputName = input[0];
+var input = process.argv.slice(3).join("+").replace(/'/g,"\'").split(",");
+var inputName = input[0]
 var year;
+// Load the NPM Package inquirer
+var inquirer = require("inquirer");
 // Grabs the bands variables
 var keys = require("./keys.js");
 var Twitter = require("twitter");
@@ -227,4 +229,50 @@ function switchify(choice,inputName){
 	}//end if (replace with switch statement)
 };
 
-switchify(process.argv[2],inputName);
+inquirer.prompt([//make into function and use recursion to keep calling until user chooses to stop
+	{
+      type: "list",
+      message: "What can I do for you?",
+      choices: ["my-tweets", "spotify-this-song", "movie-this","do-what-it-says"],
+      name: "choice"
+    }
+]).then(function(response){
+	fs.appendFile('log.txt', response.choice + '\n', function (err) {
+	  if (err) throw err;
+	});
+
+	switch(response.choice){//complete switch with prompt for more info when necessary
+		case "movie-this":
+			inquirer.prompt([
+				{
+					type:"input",
+					message: "What movie shall I look up for you?",
+					name: "movie"
+				}
+			]).then(function(resp){
+				switchify(response.choice,resp.movie);
+			})
+			break;
+		case "spotify-this-song":
+			inquirer.prompt([
+				{
+					type:"input",
+					message: "What song shall I look up for you?",
+					name: "song"
+				}
+			]).then(function(resp){
+				switchify(response.choice,resp.song);
+			})
+			break;
+		case "do-what-it-says":
+			switchify(response.choice,"");
+			break;
+		case "my-tweets":
+			switchify(response.choice,"");
+			break;
+	}
+});
+
+
+
+//switchify(process.argv[2],inputName);

@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/Gr8ChairmanMeow/liri-node-app#readme",
   "dependencies": {
+    "inquirer": "^3.2.1",
     "node-spotify-api": "^1.0.6",
     "request": "^2.81.0",
     "twitter": "^1.7.1"
