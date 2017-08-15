@@ -1,5 +1,4 @@
-var input = process.argv.slice(3).join("+").replace(/'/g,"\'").split(",");
-var inputName = input[0]
+var inputName;
 var year;
 // Load the NPM Package inquirer
 var inquirer = require("inquirer");
@@ -15,10 +14,6 @@ var spotify = new Spotify(keys.spotifyKeys);
 var twitterParams = {
 	q: 'curbchildrenfam',
 	count:20};
-
-fs.appendFile('log.txt', process.argv.slice(2) + '\n', function (err) {
-  if (err) throw err;
-});
 
 //test of title case function
 
@@ -43,136 +38,161 @@ function titleCase(string){
         return title;
 };
 
-//end test
-
-
-//check if there is year
-if (input.length>1){
-	year = input[1].trim().replace("+","");
-}
-else{
-	year = "";
-}
-
-// ...fs.readFile('random.txt', 'utf8', function(err, data) {});
-// Then run a request to the OMDB API with the movie specified
-function switchify(choice,inputName){
-
-	switch(choice){
-		case "my-tweets":
-			twitter.get('search/tweets',twitterParams,function(error, tweets, response) {
-		  		var masterArr = [];
-				if (!error) {
-					tweets = tweets.statuses;
-					for (var i = 0; i < tweets.length; i++) {
-
-						var outputArr = [
-						(i+1) + ": " + tweets[i].text,
-						"",
-						"Created: " + tweets[i].created_at,
-						"--------------------------------------------"];
-
-						for(j=0;j<outputArr.length;j++){
-							console.log(outputArr[j]);
-							masterArr.push(outputArr[j]);
-						}
-
-						/*console.log((i+1) + ": " + tweets[i].text);
-						console.log("");
-						console.log("Created: " + tweets[i].created_at);
-						console.log("--------------------------------------------");*/
-					}
-				var stream = fs.createWriteStream("log.txt",
-					{ flags: 'a',
-					encoding: null,
-					mode: 0666});
-				stream.on('error', console.error);
-				masterArr.forEach((str) => { 
-					stream.write(str + '\n'); 
-				});
-				stream.end();
-				}
-				else{
-					console.log(error);
-				}
-
-			});//end of get
-			break;
-		case "spotify-this-song":
-
-			if(inputName === ""){
-				inputName = "Never+Gonna+Give+You+Up";
-			}
-
-			var spotifyParams = {
-				type: 'track',
-				query: inputName};
-
-				//console.log(spotifyParams)
+//myTweets function
+function myTweets(){
+	twitter.get('search/tweets',twitterParams,function(error, tweets, response) {
 			var masterArr = [];
+		if (!error) {
+			tweets = tweets.statuses;
+			for (var i = 0; i < tweets.length; i++) {
 
-			spotify.search(spotifyParams, function(err, data) {
-			
-			
-				if (err) {
-					return console.log('Error occurred: ' + err);
+				var outputArr = [
+				(i+1) + ": " + tweets[i].text,
+				"",
+				"Created: " + tweets[i].created_at,
+				"--------------------------------------------"];
+
+				for(j=0;j<outputArr.length;j++){
+					console.log(outputArr[j]);
+					masterArr.push(outputArr[j]);
 				}
 
-				inputName = titleCase(inputName.replace(/\+/g," "));
-				
+			}//end for loop
+		var stream = fs.createWriteStream("log.txt",
+			{ flags: 'a',
+			encoding: null,
+			mode: 0666});
+		stream.on('error', console.error);
+		masterArr.forEach((str) => { 
+			stream.write(str + '\n'); 
+		});//end forEach loop
+		stream.end();
+		}//end if statement
+		else{
+			console.log(error);
+		}//end else statement
 
-				for (i=0;i<5;i++){
+	});//end of get
+}
+//end myTweets();
 
-					var outputArr = [
-						"----------------------",
-						(i+1) + ". " + data.tracks.items[i].artists[0].name,
-						inputName,
-						data.tracks.items[i].album.name,
-						data.tracks.items[i].external_urls.spotify,
-						"----------------------",
-					];
+//doWhatSays function
+function doWhatSays(){
+	fs.readFile('random.txt', 'utf8', function(err, data) {
 
-					
-					for(j=0;j<outputArr.length;j++){
-						console.log(outputArr[j]);
-						masterArr.push(outputArr[j]);
-					}
-					//console.log(masterArr)
+		//console.log(data);
 
-				}
+		if (err) {
+			return console.log(err);
+		}
 
-				//console.log(masterArr);
+		var doChoiceArr = data.replace(/"/g,"").split(",");
+		var choiceArrOne;
 
-				var stream = fs.createWriteStream("log.txt",
-					{ flags: 'a',
-					encoding: null,
-					mode: 0666});
-					stream.on('error', console.error);
-					masterArr.forEach((str) => { 
-						stream.write(str + '\n'); 
-					});
-				stream.end();
+		if(!doChoiceArr[1]){
+			choiceArrOne = "";
+		}
+		else{
+			choiceArrOne = doChoiceArr[1];
+		}
 
-			});
+		switch(doChoiceArr[0]){
+			case "movie-this":
+				movieThis(choiceArrOne);
+				break;
+			case "spotify-this-song":
+				spotifyThis(choiceArrOne);
+				break;
+			case "my-tweets":
+				myTweets();
+				break;
+		}
 
-			break;
-		case "movie-this":
-			if(inputName === ""){
-				inputName = "Blade+Runner";
-			}
+		//switchify(doChoiceArr[0],choiceArrOne.replace(/ /g,"+"));
+	});
+};
+//end doWhatSays();
 
-			var omdbURL = "http://www.omdbapi.com/?t=" + inputName + "&y=" + year + "&plot=short&apikey=40e9cece";
-			//console.log(omdbURL)
-			request(omdbURL, function(error, response, body) {
+//spotifyThis function
+function spotifyThis(inputName){
+	if(inputName === ""){
+		inputName = "Never+Gonna+Give+You+Up";
+	}
 
-			// If the request is successful (i.e. if the response status code is 200)
-			if (!error && response.statusCode === 200) {
+	var spotifyParams = {
+		type: 'track',
+		query: inputName
+	};
 
-				// Parse the body of the site and recover just the imdbRating
-				// (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
-				var thisJSON = JSON.parse(body);
+	//console.log(spotifyParams)
+	var masterArr = [];
 
-				var outputArr = ["",
+	spotify.search(spotifyParams, function(err, data) {
+
+
+	if (err) {
+		return console.log('Error occurred: ' + err);
+	}
+
+	inputName = titleCase(inputName.replace(/\+/g," "));
+
+
+	for (i=0;i<5;i++){
+
+		var outputArr = [
+			"----------------------",
+			(i+1) + ". " + data.tracks.items[i].artists[0].name,
+			inputName,
+			data.tracks.items[i].album.name,
+			data.tracks.items[i].external_urls.spotify,
+			"----------------------",
+		];
+
+		
+		for(j=0;j<outputArr.length;j++){
+			console.log(outputArr[j]);
+			masterArr.push(outputArr[j]);
+		}
+		//console.log(masterArr)
+
+	}
+
+	//console.log(masterArr);
+
+	var stream = fs.createWriteStream("log.txt",
+		{
+			flags: 'a',
+			encoding: null,
+			mode: 0666
+		});
+		stream.on('error', console.error);
+		masterArr.forEach((str) => { 
+			stream.write(str + '\n'); 
+		});//end forEach
+	stream.end();
+
+	});//end search
+}//end spotifyThis();
+
+//movieThis function
+function movieThis(inputName,year){
+
+	if(inputName === ""){
+		inputName = "Blade+Runner";
+	}
+
+	var omdbURL = "http://www.omdbapi.com/?t=" + inputName + "&y=" + year + "&plot=short&apikey=40e9cece";
+	//console.log(omdbURL)
+	request(omdbURL, function(error, response, body) {
+
+		// If the request is successful (i.e. if the response status code is 200)
+		if (!error && response.statusCode === 200) {
+
+			// Parse the body of the site and recover just the imdbRating
+			// (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
+			var thisJSON = JSON.parse(body);
+
+			var outputArr = ["",
 				"-------------",
 				"Title: " + thisJSON.Title,
 				"Rated: " + thisJSON.Rated,
@@ -183,74 +203,47 @@ function switchify(choice,inputName){
 				"Language: " + thisJSON.Language,
 				"Plot: " + thisJSON.Plot,
 				"Actors: " + thisJSON.Actors,
-				"-------------"];
+				"-------------"
+			];
 
-				for(i=0;i<outputArr.length;i++){
-					console.log(outputArr[i]);
-				}
+			for(i=0;i<outputArr.length;i++){
+				console.log(outputArr[i]);
+			}
 
-				var stream = fs.createWriteStream("log.txt",
-					{ flags: 'a',
-					  encoding: null,
-					  mode: 0666 
-					});
-					stream.on('error', console.error);
-					outputArr.forEach((str) => { 
-						stream.write(str + '\n'); 
-					});
-				stream.end();
+			var stream = fs.createWriteStream("log.txt",
+				{
+					flags: 'a',
+					encoding: null,
+					mode: 0666 
+				});
+				stream.on('error', console.error);
+				outputArr.forEach((str) => { 
+					stream.write(str + '\n'); 
+				});
+			stream.end();
 
-				}
-			});//end of if
-			break;
-		case "do-what-it-says":
-			fs.readFile('random.txt', 'utf8', function(err, data) {
+		}//end of if
+	});//end of request
+};//end movieThis();
 
-				//console.log(data);
-
-				if (err) {
-					return console.log(err);
-				}
-
-				var doChoiceArr = data.replace(/"/g,"").split(",");
-				var choiceArrOne;
-
-				if(!doChoiceArr[1]){
-					choiceArrOne = "";
-				}
-				else{
-					choiceArrOne = doChoiceArr[1];
-				}
-
-				switchify(doChoiceArr[0],choiceArrOne.replace(/ /g,"+"));
-			});
-			break;
-
-	}//end if (replace with switch statement)
-};
-
-inquirer.prompt([//make into function and use recursion to keep calling until user chooses to stop
-	{
-      type: "list",
-      message: "What can I do for you?",
-      choices: ["my-tweets", "spotify-this-song", "movie-this","do-what-it-says"],
-      name: "choice"
-    }
-]).then(function(response){
-	fs.appendFile('log.txt', response.choice + '\n', function (err) {
-	  if (err) throw err;
-	});
-
-	switch(response.choice){//complete switch with prompt for more info when necessary
+//switchify function
+function switchify(choice){
+	switch(choice){//complete switch with prompt for more info when necessary
 		case "movie-this":
 			inquirer.prompt([
 				{
 					type:"input",
 					message: "What movie shall I look up for you?",
 					name: "movie"
+				},
+				{
+					type:"input",
+					message: "What year? (Hit enter if not sure.)",
+					name: "year"
 				}
 			]).then(function(resp){
-				switchify(response.choice,resp.movie);
+				movieThis(resp.movie,resp.year);
+
 			})
 			break;
 		case "spotify-this-song":
@@ -261,18 +254,57 @@ inquirer.prompt([//make into function and use recursion to keep calling until us
 					name: "song"
 				}
 			]).then(function(resp){
-				switchify(response.choice,resp.song);
-			})
+				spotifyThis(resp.song);
+			});//end then
 			break;
 		case "do-what-it-says":
-			switchify(response.choice,"");
+			doWhatSays();
 			break;
 		case "my-tweets":
-			switchify(response.choice,"");
+			myTweets();
 			break;
-	}
-});
+	}//end switch statement
+};//end switchify();
 
+//function continue
+function continueLiri(){
+	inquirer.prompt([
+		{
+			type:"list",
+			message:"Anything else I can do for you?",
+			choices:["Yes","No"],
+			name:"yesNo"
+		}
+	]).then(function(response){
+		if(response.yesNo === "Yes"){
+			startPrompt();
+		}
+		else{
+			fs.writeFile('log.txt',"", function (err) {
+			  if (err) throw err;
+			});
+		}
+	});//end inner inquirer prompt call
+}
 
+//end continue();
 
-//switchify(process.argv[2],inputName);
+//startPrompt function
+function startPrompt(callback){
+	inquirer.prompt([//make into function and use recursion to keep calling until user chooses to stop	
+		{
+	      type: "list",
+	      message: "What can I do for you?",
+	      choices: ["my-tweets", "spotify-this-song", "movie-this","do-what-it-says"],
+	      name: "choice"
+	    }
+	]).then(function(response){
+		fs.appendFile('log.txt', response.choice + '\n', function (err) {
+		  if (err) throw err;
+		});
+		switchify(response.choice);
+		setTimeout(continueLiri,3500);
+	});//end prompt call
+};//end startPrompt function
+
+startPrompt();
