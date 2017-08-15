@@ -107,8 +107,6 @@ function doWhatSays(){
 				myTweets();
 				break;
 		}
-
-		//switchify(doChoiceArr[0],choiceArrOne.replace(/ /g,"+"));
 	});
 };
 //end doWhatSays();
@@ -153,11 +151,8 @@ function spotifyThis(inputName){
 			console.log(outputArr[j]);
 			masterArr.push(outputArr[j]);
 		}
-		//console.log(masterArr)
 
 	}
-
-	//console.log(masterArr);
 
 	var stream = fs.createWriteStream("log.txt",
 		{
@@ -188,8 +183,6 @@ function movieThis(inputName,year){
 		// If the request is successful (i.e. if the response status code is 200)
 		if (!error && response.statusCode === 200) {
 
-			// Parse the body of the site and recover just the imdbRating
-			// (Note: The syntax below for parsing isn't obvious. Just spend a few moments dissecting it).
 			var thisJSON = JSON.parse(body);
 
 			var outputArr = ["",
@@ -285,9 +278,7 @@ function continueLiri(){
 			});
 		}
 	});//end inner inquirer prompt call
-}
-
-//end continue();
+}//end continue();
 
 //startPrompt function
 function startPrompt(callback){
@@ -303,8 +294,7 @@ function startPrompt(callback){
 		  if (err) throw err;
 		});
 		switchify(response.choice);
-		setTimeout(continueLiri,3500);
+		setTimeout(continueLiri,5000);
 	});//end prompt call
 };//end startPrompt function
-
 startPrompt();
