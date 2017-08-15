@@ -15,12 +15,9 @@ var twitterParams = {
 	q: 'curbchildrenfam',
 	count:20};
 
-//test of title case function
-
 function titleCase(string){
 
         var titleArr = string.split(" ")
-
         //loops through movie title array and splits words into
         //first letter and the remainder of the word
         for (i=0;i<titleArr.length;i++){
@@ -30,8 +27,7 @@ function titleCase(string){
           var rest = titleArr[i].slice(1).toLowerCase();
           //word string recombined and replaces original word from .split array
           titleArr[i] = upper + rest;
-        }
-        
+        }        
         //once loop through title array complete, individual words of title are recombined with " " inbetween.
         var title = titleArr.join(" ")
 
@@ -55,9 +51,8 @@ function myTweets(){
 				for(j=0;j<outputArr.length;j++){
 					console.log(outputArr[j]);
 					masterArr.push(outputArr[j]);
-				}
-
-			}//end for loop
+				}//end of inner for loop
+			}//end of outer for loop
 		var stream = fs.createWriteStream("log.txt",
 			{ flags: 'a',
 			encoding: null,
@@ -74,19 +69,15 @@ function myTweets(){
 		}//end else statement
 	continueLiri(isTrue);
 	});//end of get
-}
-//end myTweets();
+}//end myTweets();
 
 //doWhatSays function
 function doWhatSays(){
 	fs.readFile('random.txt', 'utf8', function(err, data) {
 
-		//console.log(data);
-
 		if (err) {
 			return console.log(err);
 		}
-
 		var doChoiceArr = data.replace(/"/g,"").split(",");
 		var choiceArrOne;
 
@@ -127,13 +118,11 @@ function spotifyThis(inputName){
 
 	spotify.search(spotifyParams, function(err, data) {
 
-
 	if (err) {
 		return console.log('Error occurred: ' + err);
 	}
 
 	inputName = titleCase(inputName.replace(/\+/g," "));
-
 
 	for (i=0;i<5;i++){
 
@@ -262,25 +251,32 @@ function switchify(choice){
 
 //function continue
 function continueLiri(callback){
-	if(callback){
-		inquirer.prompt([
-			{
-				type:"list",
-				message:"Anything else I can do for you?",
-				choices:["Yes","No"],
-				name:"yesNo"
-			}
-		]).then(function(response){
-			if(response.yesNo === "Yes"){
-				startPrompt();
-			}
-			else{
-				fs.writeFile('log.txt',"", function (err) {
-				  if (err) throw err;
-				});
-			}
-		});//end inner inquirer prompt call
-	}
+	function goodbye(){
+		console.log("Goodbye...")
+	};
+	function waitThis(){
+		if(callback){
+			inquirer.prompt([
+				{
+					type:"list",
+					message:"Anything else I can do for you?",
+					choices:["Yes","No"],
+					name:"yesNo"
+				}
+			]).then(function(response){
+				if(response.yesNo === "Yes"){
+					startPrompt();
+				}
+				else{
+					setTimeout(goodbye,1000);
+					fs.writeFile('log.txt',"", function (err) {
+					  if (err) throw err;
+					});
+				}
+			});//end inner inquirer prompt call
+		}
+	};
+	setTimeout(waitThis,1000);
 }//end continue();
 
 //startPrompt function
