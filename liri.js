@@ -62,12 +62,11 @@ function myTweets(){
 			stream.write(str + '\n'); 
 		});//end forEach loop
 		stream.end();
-		var isTrue = true;
 		}//end if statement
 		else{
 			console.log(error);
 		}//end else statement
-	continueLiri(isTrue);
+	continueLiri();
 	});//end of get
 }//end myTweets();
 
@@ -154,8 +153,7 @@ function spotifyThis(inputName){
 			stream.write(str + '\n'); 
 		});//end forEach
 	stream.end();
-	var isTrue = true;
-	continueLiri(isTrue);
+	continueLiri();
 	});//end search
 }//end spotifyThis();
 
@@ -204,9 +202,8 @@ function movieThis(inputName,year){
 					stream.write(str + '\n'); 
 				});
 			stream.end();
-			var isTrue = true;
 		}//end of if
-		continueLiri(isTrue);
+		continueLiri();
 	});//end of request
 };//end movieThis();
 
@@ -255,7 +252,6 @@ function continueLiri(callback){
 		console.log("Goodbye...")
 	};
 	function waitThis(){
-		if(callback){
 			inquirer.prompt([
 				{
 					type:"list",
@@ -274,8 +270,7 @@ function continueLiri(callback){
 					});
 				}
 			});//end inner inquirer prompt call
-		}
-	};
+		};
 	setTimeout(waitThis,1000);
 }//end continue();
 
