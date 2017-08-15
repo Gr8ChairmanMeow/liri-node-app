@@ -67,11 +67,12 @@ function myTweets(){
 			stream.write(str + '\n'); 
 		});//end forEach loop
 		stream.end();
+		var isTrue = true;
 		}//end if statement
 		else{
 			console.log(error);
 		}//end else statement
-
+	continueLiri(isTrue);
 	});//end of get
 }
 //end myTweets();
@@ -107,9 +108,8 @@ function doWhatSays(){
 				myTweets();
 				break;
 		}
-	});
-};
-//end doWhatSays();
+	});//end readFile
+};//end doWhatSays();
 
 //spotifyThis function
 function spotifyThis(inputName){
@@ -165,7 +165,8 @@ function spotifyThis(inputName){
 			stream.write(str + '\n'); 
 		});//end forEach
 	stream.end();
-
+	var isTrue = true;
+	continueLiri(isTrue);
 	});//end search
 }//end spotifyThis();
 
@@ -214,8 +215,9 @@ function movieThis(inputName,year){
 					stream.write(str + '\n'); 
 				});
 			stream.end();
-
+			var isTrue = true;
 		}//end of if
+		continueLiri(isTrue);
 	});//end of request
 };//end movieThis();
 
@@ -236,7 +238,6 @@ function switchify(choice){
 				}
 			]).then(function(resp){
 				movieThis(resp.movie,resp.year);
-
 			})
 			break;
 		case "spotify-this-song":
@@ -260,24 +261,26 @@ function switchify(choice){
 };//end switchify();
 
 //function continue
-function continueLiri(){
-	inquirer.prompt([
-		{
-			type:"list",
-			message:"Anything else I can do for you?",
-			choices:["Yes","No"],
-			name:"yesNo"
-		}
-	]).then(function(response){
-		if(response.yesNo === "Yes"){
-			startPrompt();
-		}
-		else{
-			fs.writeFile('log.txt',"", function (err) {
-			  if (err) throw err;
-			});
-		}
-	});//end inner inquirer prompt call
+function continueLiri(callback){
+	if(callback){
+		inquirer.prompt([
+			{
+				type:"list",
+				message:"Anything else I can do for you?",
+				choices:["Yes","No"],
+				name:"yesNo"
+			}
+		]).then(function(response){
+			if(response.yesNo === "Yes"){
+				startPrompt();
+			}
+			else{
+				fs.writeFile('log.txt',"", function (err) {
+				  if (err) throw err;
+				});
+			}
+		});//end inner inquirer prompt call
+	}
 }//end continue();
 
 //startPrompt function
@@ -294,7 +297,6 @@ function startPrompt(callback){
 		  if (err) throw err;
 		});
 		switchify(response.choice);
-		setTimeout(continueLiri,5000);
 	});//end prompt call
 };//end startPrompt function
 startPrompt();
