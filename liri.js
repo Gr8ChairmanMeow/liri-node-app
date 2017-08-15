@@ -33,7 +33,6 @@ function titleCase(string){
 
         return title;
 };
-
 //myTweets function
 function myTweets(){
 	twitter.get('search/tweets',twitterParams,function(error, tweets, response) {
@@ -69,7 +68,6 @@ function myTweets(){
 	continueLiri();
 	});//end of get
 }//end myTweets();
-
 //doWhatSays function
 function doWhatSays(){
 	fs.readFile('random.txt', 'utf8', function(err, data) {
@@ -167,7 +165,6 @@ function movieThis(inputName,year){
 	var omdbURL = "http://www.omdbapi.com/?t=" + inputName + "&y=" + year + "&plot=short&apikey=40e9cece";
 	//console.log(omdbURL)
 	request(omdbURL, function(error, response, body) {
-
 		// If the request is successful (i.e. if the response status code is 200)
 		if (!error && response.statusCode === 200) {
 
